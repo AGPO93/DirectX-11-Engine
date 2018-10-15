@@ -14,11 +14,13 @@ public:
 	int Run();
 
 	// framework methods
-
 	virtual bool Init();
 	virtual void Update(float dt) = 0;
 	virtual void Render(float dt) = 0;
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	void beginFrame();
+	void endFrame();
 
 private:
 	void createRenderTarget();
@@ -35,7 +37,7 @@ protected:
 
 	//DX attributes
 	ID3D11Device*			m_pDevice;
-	ID3D11DeviceContext*	m_pImmediateContext;
+	ID3D11DeviceContext*	m_pDeviceContext;
 	IDXGISwapChain*			m_pSwapChain;
 	ID3D11RenderTargetView* m_pRenderTargetView;
 	D3D_DRIVER_TYPE			m_DriverType;

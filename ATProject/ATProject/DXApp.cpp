@@ -174,13 +174,7 @@ bool DXApp::InitDirect3D()
 		return false;
 	}
 
-	////create render target view
-	//ID3D11Texture2D* m_pBackBufferTex = nullptr;
-	//m_pSwapChain->GetBuffer(NULL, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pBackBufferTex));
-	//m_pDevice->CreateRenderTargetView(m_pBackBufferTex, nullptr, &m_pRenderTargetView);
-
-	////bind render target view
-	//m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
+	createRenderTarget();
 
 	//viewport creation
 	m_Viewport.Width = static_cast<float>(m_ClientWidth);
@@ -228,8 +222,18 @@ void DXApp::createRenderTarget()
 
 	//bind render target view
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
+}
 
+void DXApp::beginFrame()
+{
+	float clearColor[] = { .25f, .5f, 1, 1 };
+	//m_pDeviceContext->ClearRenderTargetView
 
+}
+
+void DXApp::endFrame()
+{
+	m_pSwapChain->Present(1, 0);
 }
 
 
