@@ -1,6 +1,2 @@
-﻿  DXApp.cpp
-d:\rts-system\atproject\atproject\dxapp.cpp(97): warning C4838: conversion from 'UINT' to 'LONG' requires a narrowing conversion
-d:\rts-system\atproject\atproject\dxapp.cpp(159): warning C4018: '<': signed/unsigned mismatch
-  winmain.cpp
-  Generating Code...
+﻿  Model.cpp
   ATProject.vcxproj -> D:\RTS-System\ATProject\Debug\ATProject.exe

@@ -23,7 +23,7 @@ DXApp::DXApp(HINSTANCE hInstance)
 	g_pApp = this;
 
 	m_pDevice = nullptr;
-	m_pImmediateContext = nullptr;
+	m_pDeviceContext = nullptr;
 	m_pRenderTargetView = nullptr;
 	m_pSwapChain = nullptr;
 }
@@ -31,10 +31,10 @@ DXApp::DXApp(HINSTANCE hInstance)
 DXApp::~DXApp(void)
 {
 	//cleanup direct3d
-	if (m_pImmediateContext) m_pImmediateContext->ClearState();
+	if (m_pDeviceContext) m_pDeviceContext->ClearState();
 	Memory::SafeRelease(m_pRenderTargetView);
 	Memory::SafeRelease(m_pSwapChain);
-	Memory::SafeRelease(m_pImmediateContext);
+	Memory::SafeRelease(m_pDeviceContext);
 	Memory::SafeRelease(m_pDevice);
 }
 
@@ -160,7 +160,7 @@ bool DXApp::InitDirect3D()
 	{
 		result = D3D11CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, 0,
 			featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &swapDesc, &m_pSwapChain, &m_pDevice,
-			&m_FeatureLevel, &m_pImmediateContext);
+			&m_FeatureLevel, &m_pDeviceContext);
 		if (SUCCEEDED(result))
 		{
 			m_DriverType = driverTypes[i];
@@ -185,7 +185,7 @@ bool DXApp::InitDirect3D()
 	m_Viewport.MaxDepth = 1.0f;
 
 	//bind viewport
-	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
+	m_pDeviceContext->RSSetViewports(1, &m_Viewport);
 
 	return true;
 }
@@ -212,6 +212,16 @@ LRESULT DXApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return LRESULT();
 }
 
+ID3D11Device * DXApp::GetDevice()
+{
+	return m_pDevice;
+}
+
+ID3D11DeviceContext * DXApp::GetDeviceContext()
+{
+	return m_pDeviceContext;
+}
+
 void DXApp::createRenderTarget()
 {
 	//create render target view
@@ -221,19 +231,8 @@ void DXApp::createRenderTarget()
 	//m_pBackBufferTex->Release();
 
 	//bind render target view
-	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
+	m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
 }
 
-void DXApp::beginFrame()
-{
-	float clearColor[] = { .25f, .5f, 1, 1 };
-	//m_pDeviceContext->ClearRenderTargetView
-
-}
-
-void DXApp::endFrame()
-{
-	m_pSwapChain->Present(1, 0);
-}
 
 

@@ -15,12 +15,12 @@ public:
 
 	// framework methods
 	virtual bool Init();
-	virtual void Update(float dt) = 0;
-	virtual void Render(float dt) = 0;
+	virtual void Update(float dt);
+	virtual void Render(float dt);
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void beginFrame();
-	void endFrame();
+	ID3D11Device*			GetDevice();
+	ID3D11DeviceContext*	GetDeviceContext();
 
 private:
 	void createRenderTarget();
