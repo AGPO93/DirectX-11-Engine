@@ -129,8 +129,9 @@ bool GraphicsClass::Frame(float mouseX, float mouseY)
 
 	m_Model->setRotation(1.0f, rotation, 1.0f);
 	// moves the cube to mouse position, values too high
-	m_Model->setTransform(mouseX/50.0f, -mouseY/50.0f, 0.0f);
+	//m_Model->setTransform(mouseX/50.0f, -mouseY/50.0f, 0.0f);
 	m_Model->UpdateMatrices();
+	m_Model->updateInstancesBuffer(m_Direct3D->GetDevice());
 	bool result;
 
 	// Render the graphics scene.
@@ -184,9 +185,6 @@ bool GraphicsClass::Render()
 
 void GraphicsClass::rotateYaw()
 {
-	rotation += 0.1f;
-}
-
-void GraphicsClass::moveCube(float mouseX, float mouseY)
-{
+	//rotation += 0.1f;
+	m_Model->MoveInstance(1, 100.0f, 1.0f, 5.0f);
 }

@@ -2,10 +2,11 @@
 #define _MODELCLASS_H_
 
 // INCLUDES 
+#include <vector>
 #include <d3d11.h>
 #include <directxmath.h>
 using namespace DirectX;
-
+using namespace std;
 // Class name: ModelClass
 class ModelClass
 {
@@ -18,7 +19,9 @@ private:
 
 	struct InstanceType
 	{
-		DirectX::XMVECTOR position;
+		//DirectX::XMVECTOR position;
+		XMFLOAT3 position;
+		XMMATRIX instanceMatrix;
 	};
 
 public:
@@ -33,6 +36,8 @@ public:
 	void UpdateMatrices();
 	void setRotation(float newPitch, float newYaw, float newRoll);
 	void setTransform(float newPosX, float newPosY, float newPosZ);
+	void MoveInstance(int i, float newPosX, float newPosY, float newPosZ);
+	bool updateInstancesBuffer(ID3D11Device* );
 	int GetVertexCount();
 	int GetInstanceCount();
 	int GetIndexCount();
@@ -51,6 +56,8 @@ private:
 	XMMATRIX RotationMatrix;
 	XMMATRIX FudgeMatrix;
 	XMMATRIX ModelMatrix;
+
+	vector<InstanceType> instances;
 
 	int m_vertexCount, m_instanceCount, m_indexCount;
 

@@ -1,19 +1,9 @@
-﻿  compilation object save succeeded; see F:\AdvancedTech\GameEngine\Debug\ColorPs.cso
-  compilation object save succeeded; see F:\AdvancedTech\GameEngine\Debug\ColorVs.cso
-  CameraClass.cpp
-  ColorShaderClass.cpp
-  D3DClass.cpp
-  GraphicsClass.cpp
-f:\advancedtech\gameengine\gameengine\graphicsclass.cpp(26): warning C4316: 'D3DClass': object allocated on the heap may not be aligned 16
-f:\advancedtech\gameengine\gameengine\graphicsclass.cpp(41): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
-f:\advancedtech\gameengine\gameengine\graphicsclass.cpp(52): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
-  InputClass.cpp
-f:\advancedtech\gameengine\gameengine\inputclass.cpp(212): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-f:\advancedtech\gameengine\gameengine\inputclass.cpp(213): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  main.cpp
+﻿  GraphicsClass.cpp
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(26): warning C4316: 'D3DClass': object allocated on the heap may not be aligned 16
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(41): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(52): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
   ModelClass.cpp
-f:\advancedtech\gameengine\gameengine\modelclass.cpp(131): warning C4316: 'ModelClass::InstanceType': object allocated on the heap may not be aligned 16
   SystemClass.cpp
+  main.cpp
   Generating Code...
-  LINK : F:\AdvancedTech\GameEngine\Debug\GameEngine.exe not found or not built by the last incremental link; performing full link
-  GameEngine.vcxproj -> F:\AdvancedTech\GameEngine\Debug\GameEngine.exe
+  GameEngine.vcxproj -> D:\RTS-System\GameEngine\Debug\GameEngine.exe

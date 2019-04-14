@@ -66,11 +66,15 @@ void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 
 void ModelClass::UpdateMatrices()
 {
-	ScaleMatrix = XMMatrixScaling(scaleX, scaleY, scaleZ);
-	RotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
-	TransformMatrix = XMMatrixTranslation(posX, posY, posZ);
+	for (int i = 0; i < m_instanceCount; i++)
+	{
+		ScaleMatrix = XMMatrixScaling(scaleX, scaleY, scaleZ);
+		RotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+ 		TransformMatrix = XMMatrixTranslation(instances[i].position.x, instances[i].position.y, instances[i].position.z);
 
-	ModelMatrix = FudgeMatrix * ScaleMatrix * RotationMatrix * TransformMatrix;
+		instances[i].instanceMatrix = FudgeMatrix * ScaleMatrix * RotationMatrix * TransformMatrix;
+	}
+	
 }
 
 XMMATRIX ModelClass::GetModelMatrix()
@@ -92,6 +96,11 @@ void ModelClass::setTransform(float newPosX, float newPosY, float newPosZ)
 	posZ = newPosZ;
 }
 
+void ModelClass::MoveInstance(int i, float newPosX, float newPosY, float newPosZ)
+{
+	instances[i].position = XMFLOAT3(newPosX, newPosY, newPosZ);//DirectX::XMVectorSet(newPosX, newPosY, newPosZ, 1.0f);
+}
+
 int ModelClass::GetVertexCount()
 {
 	return m_vertexCount;
@@ -110,10 +119,10 @@ int ModelClass::GetIndexCount()
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
 	VertexType* vertices;
-	InstanceType* instances;
+	//InstanceType* instances;
 	unsigned long* indices;
-	D3D11_BUFFER_DESC vertexBufferDesc, instanceBufferDesc, indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData, instanceData, indexData;
+	D3D11_BUFFER_DESC vertexBufferDesc, /*instanceBufferDesc,*/ indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, /*instanceData,*/ indexData;
 	HRESULT result;
 
 	// Set the number of vertices in the vertex & instance arrays.
@@ -128,11 +137,19 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 
-	instances = new InstanceType[m_instanceCount];
-	if (!instances)
+	//instances = new InstanceType[m_instanceCount];
+	InstanceType inst;
+	instances.assign(m_instanceCount, inst);
+
+	for(int i =0; i < m_instanceCount;i++)
+	{
+		instances[i].instanceMatrix = XMMatrixIdentity();
+	}
+
+	/*if (!instances.empty)
 	{
 		return false;
-	}
+	}*/
 
 	indices = new unsigned long[m_indexCount];
 	if (!indices)
@@ -165,10 +182,10 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertices[7].position = XMFLOAT3(1.0f, -1.0f, 1.0f);
 	vertices[7].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
-	instances[0].position = DirectX::XMVectorSet(-1.5f, -1.5f, 5.0f, 1.0f);
-	instances[1].position = DirectX::XMVectorSet(-1.5f, 1.5f, 5.0f, 1.0f);
-	instances[2].position = DirectX::XMVectorSet(1.5f, -1.5f, 5.0f, 1.0f);
-	instances[3].position = DirectX::XMVectorSet(1.5f, 1.5f, 5.0f, 1.0f);
+	instances[0].position =  XMFLOAT3(-1.5f, -1.5f, 5.0f);//DirectX::XMVectorSet(-1.5f, -1.5f, 5.0f, 1.0f);
+	instances[1].position = XMFLOAT3(-1.5f, 1.5f, 5.0f);//DirectX::XMVectorSet(-1.5f, 1.5f, 5.0f, 1.0f);
+	instances[2].position = XMFLOAT3(5.5f, -1.5f, 5.0f);//DirectX::XMVectorSet(5.5f, -1.5f, 5.0f, 1.0f);
+	instances[3].position = XMFLOAT3(5.5f, 1.5f, 5.0f);//DirectX::XMVectorSet(5.5f, 1.5f, 5.0f, 1.0f);
 
 	// Load the index array with data.
 	//front face
@@ -227,12 +244,12 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
-	instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
-	instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	instanceBufferDesc.CPUAccessFlags = 0;
-	instanceBufferDesc.MiscFlags = 0;
-	instanceBufferDesc.StructureByteStride = 0;
+	//instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
+	//instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//instanceBufferDesc.CPUAccessFlags = 0;
+	//instanceBufferDesc.MiscFlags = 0;
+	//instanceBufferDesc.StructureByteStride = 0;
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount * 3;
@@ -246,9 +263,9 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	instanceData.pSysMem = instances;
-	instanceData.SysMemPitch = 0;
-	instanceData.SysMemSlicePitch = 0;
+	//instanceData.pSysMem = instances.data();
+	//instanceData.SysMemPitch = 0;
+	//instanceData.SysMemSlicePitch = 0;
 
 	indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
@@ -261,23 +278,57 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 
-	result = device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer);
+	/*result = device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
-
+*/
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Release the arrays
-	delete[] vertices;
-	vertices = 0;
-	delete[] instances;
-	instances = 0;
+	//// Release the arrays
+	//delete[] vertices;
+	//vertices = 0;
+	//delete[] instances;
+	//instances = 0;
+
+	return true;
+}
+
+bool ModelClass::updateInstancesBuffer(ID3D11Device* device)
+{
+	//m_instanceBuffer = 0;
+	D3D11_BUFFER_DESC instanceBufferDesc;
+	D3D11_SUBRESOURCE_DATA instanceData;
+
+	HRESULT result;
+
+
+	// Set up the description of the instance buffer.
+
+	instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
+	instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	instanceBufferDesc.CPUAccessFlags = 0;
+	instanceBufferDesc.MiscFlags = 0;
+	instanceBufferDesc.StructureByteStride = 0;
+
+	// Give the subresource structure a pointer to the instance data.
+	instanceData.pSysMem = instances.data();
+	instanceData.SysMemPitch = 0;
+	instanceData.SysMemSlicePitch = 0;
+
+	// Create the instance buffer.
+	result = device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 
 	return true;
 }

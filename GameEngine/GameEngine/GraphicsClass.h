@@ -27,7 +27,6 @@ public:
 	bool Render();
 
 	void rotateYaw();
-	void moveCube(float, float);
 
 	float rotation = 0;
 	float moveX = 0;
