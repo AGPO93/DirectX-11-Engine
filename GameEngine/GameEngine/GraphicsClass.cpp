@@ -42,8 +42,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(3.0f, 2.5f, -20.0f);
+	m_Camera->SetPosition(3.0f, 2.5f, -30.0f);
 	m_Camera->SetRotation(0.0f, 0.0f, 0.0f);
+	camPos = m_Camera->GetPosition();
 
 	m_Model = new ModelClass;
 	if (!m_Model)
@@ -191,6 +192,30 @@ void GraphicsClass::CubeController(char keyPressed)
 
 	case 'C':
 		ChangeCube();
+		break;
+	}
+}
+
+void GraphicsClass::CamController(char keyPressed)
+{
+	m_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	
+	switch (keyPressed)
+	{
+	case 'I':
+		camPos.y += .25f;
+		break;
+
+	case 'J':
+		camPos.x -= .25f;
+		break;
+
+	case 'K':
+		camPos.y -= .25f;
+		break;
+
+	case 'L':
+		camPos.x += .25f;
 		break;
 	}
 }

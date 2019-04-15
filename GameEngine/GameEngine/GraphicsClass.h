@@ -26,6 +26,7 @@ public:
 	bool Frame();
 	bool Render();	
 	void CubeController(char keyPressed);
+	void CamController(char dir);
 
 private:
 	void MoveCube();
@@ -36,6 +37,7 @@ private:
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
 
+	XMFLOAT3 camPos;
 	float rotation = 0;
 	float moveX = 0;
 	float moveY = 0;

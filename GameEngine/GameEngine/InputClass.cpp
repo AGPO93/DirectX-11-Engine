@@ -244,14 +244,27 @@ char InputClass::KeyPressed()
 	{
 		return 'D';
 	}
-	//if (m_keyboardState[DIK_SPACE] & 0x80)
-	//{
 
-	//	//return 'C';
-	//}
 	if (IsKeyDown(DIK_SPACE))
 	{
 		return 'C';
+	}
+
+	if (m_keyboardState[DIK_UPARROW] & 0x80)
+	{
+		return 'I';
+	}
+	if (m_keyboardState[DIK_DOWNARROW] & 0x80)
+	{
+		return 'K';
+	}
+	if (m_keyboardState[DIK_LEFTARROW] & 0x80)
+	{
+		return 'J';
+	}
+	if (m_keyboardState[DIK_RIGHTARROW] & 0x80)
+	{
+		return 'L';
 	}
 }
 
