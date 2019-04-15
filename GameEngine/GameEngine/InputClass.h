@@ -19,7 +19,7 @@ public:
 	bool Frame();
 
 	bool IsEscapePressed();
-	bool yPressed();
+	char KeyPressed();
 	void GetMouseLocation(float&, float&);
 
 	void KeyDown(unsigned int);

@@ -98,7 +98,13 @@ void ModelClass::setTransform(float newPosX, float newPosY, float newPosZ)
 
 void ModelClass::MoveInstance(int i, float newPosX, float newPosY, float newPosZ)
 {
-	instances[i].position = XMFLOAT3(newPosX, newPosY, newPosZ);//DirectX::XMVectorSet(newPosX, newPosY, newPosZ, 1.0f);
+	instances[i].position = XMFLOAT3(newPosX, newPosY, newPosZ);
+}
+
+XMFLOAT3 ModelClass::GetCurrentPos(int i)
+{
+	XMFLOAT3 previousPos = instances[i].position;
+	return previousPos;
 }
 
 int ModelClass::GetVertexCount()

@@ -23,20 +23,24 @@ public:
 
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame(float, float);
-	bool Render();
-
-	void rotateYaw();
-
-	float rotation = 0;
-	float moveX = 0;
-	float moveY = 0;
+	bool Frame();
+	bool Render();	
+	void CubeController(char keyPressed);
 
 private:
+	void MoveCube();
+	void ChangeCube();
+
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
+
+	float rotation = 0;
+	float moveX = 0;
+	float moveY = 0;
+	float moveZ = 0;
+	int cubeIndex = 0;
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include <directxmath.h>
 using namespace DirectX;
 using namespace std;
-// Class name: ModelClass
+
 class ModelClass
 {
 private:
@@ -37,6 +37,7 @@ public:
 	void setRotation(float newPitch, float newYaw, float newRoll);
 	void setTransform(float newPosX, float newPosY, float newPosZ);
 	void MoveInstance(int i, float newPosX, float newPosY, float newPosZ);
+	XMFLOAT3 GetCurrentPos(int i);
 	bool updateInstancesBuffer(ID3D11Device* );
 	int GetVertexCount();
 	int GetInstanceCount();

@@ -141,7 +141,7 @@ bool SystemClass::Frame()
 	m_Input->GetMouseLocation(mouseX, mouseY);
 
 	// Do the frame processing for the graphics object.
-	result = m_Graphics->Frame(mouseX, mouseY);
+	result = m_Graphics->Frame();
 	if (!result)
 	{
 		return false;
@@ -154,14 +154,11 @@ bool SystemClass::Frame()
 		return false;
 	}
 
-	if (m_Input->yPressed() == true)
-	{
-		m_Graphics->rotateYaw();
-	}
+	// Handle inputs.
+	m_Graphics->CubeController(m_Input->KeyPressed());
 
 	return true;
 }
-
 
 LRESULT CALLBACK SystemClass::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
@@ -298,3 +295,4 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 	}
 	}
 }
+

@@ -18,6 +18,7 @@ public:
 	bool Initialize();
 	void Shutdown();
 	void Run();
+	InputClass* GetInputPointer() { return m_Input; }
 
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 
@@ -30,19 +31,17 @@ private:
 	std::string m_applicationName;
 	HINSTANCE m_hinstance;
 	HWND m_hwnd;
-
 	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
+
+	char keyPressed;
 };
 
 // FUNCTION PROTOTYPES
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-
-
 // GLOBALS
 static SystemClass* ApplicationHandle = 0;
-
 
 #endif
 

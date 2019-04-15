@@ -1,9 +1,5 @@
-﻿  GraphicsClass.cpp
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(26): warning C4316: 'D3DClass': object allocated on the heap may not be aligned 16
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(41): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(52): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
-  ModelClass.cpp
-  SystemClass.cpp
-  main.cpp
-  Generating Code...
+﻿  InputClass.cpp
+d:\rts-system\gameengine\gameengine\inputclass.cpp(212): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+d:\rts-system\gameengine\gameengine\inputclass.cpp(213): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+d:\rts-system\gameengine\gameengine\inputclass.cpp(256): warning C4715: 'InputClass::KeyPressed': not all control paths return a value
   GameEngine.vcxproj -> D:\RTS-System\GameEngine\Debug\GameEngine.exe

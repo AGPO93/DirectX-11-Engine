@@ -226,13 +226,33 @@ bool InputClass::IsEscapePressed()
 	return false;
 }
 
-bool InputClass::yPressed()
+char InputClass::KeyPressed()
 {
-	if (m_keyboardState[DIK_Y] & 0x80)
+	if (m_keyboardState[DIK_W] & 0x80)
 	{
-		return true;
+		return 'W';
 	}
-	return false;
+	if (m_keyboardState[DIK_A] & 0x80)
+	{
+		return 'A';
+	}
+	if (m_keyboardState[DIK_S] & 0x80)
+	{
+		return 'S';
+	}
+	if (m_keyboardState[DIK_D] & 0x80)
+	{
+		return 'D';
+	}
+	//if (m_keyboardState[DIK_SPACE] & 0x80)
+	//{
+
+	//	//return 'C';
+	//}
+	if (IsKeyDown(DIK_SPACE))
+	{
+		return 'C';
+	}
 }
 
 void InputClass::GetMouseLocation(float& mouseX, float& mouseY)
@@ -258,7 +278,13 @@ void InputClass::KeyUp(unsigned int input)
 
 bool InputClass::IsKeyDown(unsigned int key)
 {
+	if (m_keyboardState[key] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
 	// Return what state the key is in (pressed/not pressed).
-	return m_keys[key];
+	//return m_keys[key];
 }
 
