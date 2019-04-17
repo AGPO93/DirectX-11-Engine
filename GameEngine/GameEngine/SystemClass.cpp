@@ -136,7 +136,7 @@ bool SystemClass::Frame()
 	{
 		return false;
 	}
-	
+
 	// Get the location of the mouse from the input object,
 	m_Input->GetMouseLocation(mouseX, mouseY);
 

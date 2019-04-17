@@ -28,6 +28,8 @@ public:
 	void CubeController(char keyPressed);
 	void CamController(char dir);
 
+	bool moveCheck = false;
+
 private:
 	void MoveCube();
 	void ChangeCube();
@@ -37,11 +39,11 @@ private:
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
 
-	XMFLOAT3 camPos;
+	XMFLOAT3 camRot;
 	float rotation = 0;
-	float moveX = 0;
-	float moveY = 0;
-	float moveZ = 0;
+	float moveX = 0.0f;
+	float moveY = 2.1f;
+	float moveZ = 0.0f;
 	int cubeIndex = 0;
 };
 

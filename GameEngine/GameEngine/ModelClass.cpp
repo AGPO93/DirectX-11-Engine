@@ -74,12 +74,6 @@ void ModelClass::UpdateMatrices()
 
 		instances[i].instanceMatrix = FudgeMatrix * ScaleMatrix * RotationMatrix * TransformMatrix;
 	}
-	
-}
-
-XMMATRIX ModelClass::GetModelMatrix()
-{
-	return ModelMatrix;
 }
 
 void ModelClass::setRotation(float newPitch, float newYaw, float newRoll)
@@ -107,33 +101,17 @@ XMFLOAT3 ModelClass::GetCurrentPos(int i)
 	return previousPos;
 }
 
-int ModelClass::GetVertexCount()
-{
-	return m_vertexCount;
-}
-
-int ModelClass::GetInstanceCount()
-{
-	return m_instanceCount;
-}
-
-int ModelClass::GetIndexCount()
-{
-	return m_indexCount;
-}
-
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
 	VertexType* vertices;
-	//InstanceType* instances;
 	unsigned long* indices;
-	D3D11_BUFFER_DESC vertexBufferDesc, /*instanceBufferDesc,*/ indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData, /*instanceData,*/ indexData;
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
 	// Set the number of vertices in the vertex & instance arrays.
 	m_vertexCount = 8;
-	m_instanceCount = 4;
+	m_instanceCount = 104;
 	m_indexCount = 36;
 
 	// Create the arrays.
@@ -143,19 +121,13 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 
-	//instances = new InstanceType[m_instanceCount];
 	InstanceType inst;
 	instances.assign(m_instanceCount, inst);
 
-	for(int i =0; i < m_instanceCount;i++)
+	for (int i = 0; i < m_instanceCount; i++)
 	{
 		instances[i].instanceMatrix = XMMatrixIdentity();
 	}
-
-	/*if (!instances.empty)
-	{
-		return false;
-	}*/
 
 	indices = new unsigned long[m_indexCount];
 	if (!indices)
@@ -163,84 +135,8 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 
-	// Load the arrays with data.
-	vertices[0].position = XMFLOAT3(-1.0f, -1.0f, -1.0f);  
-	vertices[0].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	vertices[1].position = XMFLOAT3(-1.0f, 1.0f, -1.0f);  
-	vertices[1].color = XMFLOAT4(1.0f, 1.0f, 0.0f, 0.0f);
-
-	vertices[2].position = XMFLOAT3(1.0f, 1.0f, -1.0f);  
-	vertices[2].color = XMFLOAT4(1.0f, 0.0f, 1.0f, 0.0f);
-
-	vertices[3].position = XMFLOAT3(1.0f, -1.0f, -1.0f); 
-	vertices[3].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.0f);
-
-	vertices[4].position = XMFLOAT3(-1.0f, -1.0f, 1.0f);  
-	vertices[4].color = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-
-	vertices[5].position = XMFLOAT3(-1.0f, 1.0f, 1.0f); 
-	vertices[5].color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	vertices[6].position = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	vertices[6].color = XMFLOAT4(1.0f, 0.0f, 1.0f, 0.0f);
-
-	vertices[7].position = XMFLOAT3(1.0f, -1.0f, 1.0f);
-	vertices[7].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	instances[0].position =  XMFLOAT3(-1.5f, -1.5f, 5.0f);//DirectX::XMVectorSet(-1.5f, -1.5f, 5.0f, 1.0f);
-	instances[1].position = XMFLOAT3(-1.5f, 1.5f, 5.0f);//DirectX::XMVectorSet(-1.5f, 1.5f, 5.0f, 1.0f);
-	instances[2].position = XMFLOAT3(5.5f, -1.5f, 5.0f);//DirectX::XMVectorSet(5.5f, -1.5f, 5.0f, 1.0f);
-	instances[3].position = XMFLOAT3(5.5f, 1.5f, 5.0f);//DirectX::XMVectorSet(5.5f, 1.5f, 5.0f, 1.0f);
-
-	// Load the index array with data.
-	//front face
-	indices[0] = 0; 
-	indices[1] = 1; 
-	indices[2] = 2; 
-	indices[3] = 0;  
-	indices[4] = 2;
-	indices[5] = 3;
-
-	//back face
-	indices[6] = 4;
-	indices[7] = 6;
-	indices[8] = 5;
-	indices[9] = 4;
-	indices[10] = 7;
-	indices[11] = 6;
-
-	//left face
-	indices[12] = 4;
-	indices[13] = 5;
-	indices[14] = 1;
-	indices[15] = 4;
-	indices[16] = 1;
-	indices[17] = 0;
-
-	//right face
-	indices[18] = 3;
-	indices[19] = 2;
-	indices[20] = 6;
-	indices[21] = 3;
-	indices[22] = 6;
-	indices[23] = 7;
-
-	//top face
-	indices[24] = 1;
-	indices[25] = 5;
-	indices[26] = 6;
-	indices[27] = 1;
-	indices[28] = 6;
-	indices[29] = 2;
-
-	//bottom face
-	indices[30] = 4;
-	indices[31] = 0;
-	indices[32] = 3;
-	indices[33] = 4;
-	indices[34] = 3;
-	indices[35] = 7;
+	LoadArrays(vertices, indices);
+	DrawGrid();
 
 	// Set up the description of the buffers.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -249,13 +145,6 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
-
-	//instanceBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	//instanceBufferDesc.ByteWidth = sizeof(InstanceType) * m_instanceCount;
-	//instanceBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//instanceBufferDesc.CPUAccessFlags = 0;
-	//instanceBufferDesc.MiscFlags = 0;
-	//instanceBufferDesc.StructureByteStride = 0;
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount * 3;
@@ -269,10 +158,6 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
-	//instanceData.pSysMem = instances.data();
-	//instanceData.SysMemPitch = 0;
-	//instanceData.SysMemSlicePitch = 0;
-
 	indexData.pSysMem = indices;
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
@@ -284,35 +169,20 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 
-	/*result = device->CreateBuffer(&instanceBufferDesc, &instanceData, &m_instanceBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
-*/
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	//// Release the arrays
-	//delete[] vertices;
-	//vertices = 0;
-	//delete[] instances;
-	//instances = 0;
-
 	return true;
 }
 
 bool ModelClass::updateInstancesBuffer(ID3D11Device* device)
 {
-	//m_instanceBuffer = 0;
 	D3D11_BUFFER_DESC instanceBufferDesc;
 	D3D11_SUBRESOURCE_DATA instanceData;
-
 	HRESULT result;
-
 
 	// Set up the description of the instance buffer.
 
@@ -334,7 +204,6 @@ bool ModelClass::updateInstancesBuffer(ID3D11Device* device)
 	{
 		return false;
 	}
-
 
 	return true;
 }
@@ -384,4 +253,101 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return;
+}
+
+void ModelClass::DrawGrid()
+{
+	float tempPosX = 5;
+	float tempPosY = 5;
+	int height = 10;
+	int width = 10;
+	int cubeIndex = 4;
+
+	for (int x = 0; x < height; x++)
+	{
+		for (int z = 0; z < width; z++)
+		{
+			instances[cubeIndex].position = XMFLOAT3(x * 2.5f, 0.0f, z * 2.5f);
+			tempPosX += 2;
+			cubeIndex++;
+		}
+		tempPosY += 2;
+	}
+}
+
+void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
+{
+	// Load the arrays with data.
+	vertices[0].position = XMFLOAT3(-1.0f, -1.0f, -1.0f);
+	vertices[1].position = XMFLOAT3(-1.0f, 1.0f, -1.0f);
+	vertices[2].position = XMFLOAT3(1.0f, 1.0f, -1.0f);
+	vertices[3].position = XMFLOAT3(1.0f, -1.0f, -1.0f);
+	vertices[4].position = XMFLOAT3(-1.0f, -1.0f, 1.0f);
+	vertices[5].position = XMFLOAT3(-1.0f, 1.0f, 1.0f);
+	vertices[6].position = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	vertices[7].position = XMFLOAT3(1.0f, -1.0f, 1.0f);
+
+	vertices[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices[1].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[2].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[3].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices[4].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices[5].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[6].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[7].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	// Controllabe cubes positions
+	instances[0].position = XMFLOAT3(0.0f, 2.1f, 0.0f);
+	instances[1].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[2].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[3].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+
+	// Load the index array with data.
+	//front face
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 0;
+	indices[4] = 2;
+	indices[5] = 3;
+
+	//back face
+	indices[6] = 4;
+	indices[7] = 6;
+	indices[8] = 5;
+	indices[9] = 4;
+	indices[10] = 7;
+	indices[11] = 6;
+
+	//left face
+	indices[12] = 4;
+	indices[13] = 5;
+	indices[14] = 1;
+	indices[15] = 4;
+	indices[16] = 1;
+	indices[17] = 0;
+
+	//right face
+	indices[18] = 3;
+	indices[19] = 2;
+	indices[20] = 6;
+	indices[21] = 3;
+	indices[22] = 6;
+	indices[23] = 7;
+
+	//top face
+	indices[24] = 1;
+	indices[25] = 5;
+	indices[26] = 6;
+	indices[27] = 1;
+	indices[28] = 6;
+	indices[29] = 2;
+
+	//bottom face
+	indices[30] = 4;
+	indices[31] = 0;
+	indices[32] = 3;
+	indices[33] = 4;
+	indices[34] = 3;
+	indices[35] = 7;
 }

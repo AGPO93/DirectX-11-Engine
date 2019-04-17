@@ -42,9 +42,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(3.0f, 2.5f, -30.0f);
-	m_Camera->SetRotation(0.0f, 0.0f, 0.0f);
-	camPos = m_Camera->GetPosition();
+	m_Camera->SetPosition(20.0f, 15.0f, -25.0f);
+	m_Camera->SetRotation(15.0f, 4.0f, 0.0f);
+
+	camRot = m_Camera->GetRotation();
 
 	m_Model = new ModelClass;
 	if (!m_Model)
@@ -117,8 +118,6 @@ bool GraphicsClass::Frame()
 	// moves the cube to mouse position, values too high
 	//m_Model->setTransform(mouseX/50.0f, -mouseY/50.0f, 0.0f);
 
-	MoveCube();
-
 	m_Model->UpdateMatrices();
 	m_Model->updateInstancesBuffer(m_Direct3D->GetDevice());
 
@@ -175,59 +174,74 @@ void GraphicsClass::CubeController(char keyPressed)
 	switch (keyPressed)
 	{
 	case 'W':
-		moveY += .25f;
+		moveZ += .25f;
+		if (!moveCheck)
+			moveCheck = true;
 		break;
 
 	case 'A':
 		moveX -= .25f;
+		if (!moveCheck)
+			moveCheck = true;
 		break;
 
 	case 'S':
-		moveY -= .25f;
+		moveZ -= .25f;
+		if (!moveCheck)
+			moveCheck = true;
 		break;
 
 	case 'D':
 		moveX += .25f;
+		if (!moveCheck)
+			moveCheck = true;
 		break;
 
 	case 'C':
 		ChangeCube();
+		if (!moveCheck)
+			moveCheck = true;
 		break;
 	}
+	MoveCube();
 }
 
 void GraphicsClass::CamController(char keyPressed)
 {
-	m_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	//m_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	m_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 	
 	switch (keyPressed)
 	{
 	case 'I':
-		camPos.y += .25f;
+		camRot.x -= 1;
 		break;
 
 	case 'J':
-		camPos.x -= .25f;
+		camRot.y -= 1;
 		break;
 
 	case 'K':
-		camPos.y -= .25f;
+		camRot.x += 1;
 		break;
 
 	case 'L':
-		camPos.x += .25f;
+		camRot.y += 1;
 		break;
 	}
 }
 
 void GraphicsClass::MoveCube()
 {
-	m_Model->MoveInstance(cubeIndex, moveX, moveY, moveZ);
+	if (moveCheck)
+	{
+		m_Model->MoveInstance(cubeIndex, moveX, moveY, moveZ);
+	}
 }
 
 void GraphicsClass::ChangeCube()
 {
-	if (cubeIndex ==3)
+	if (cubeIndex == 3)
 		cubeIndex = 0;
 	else
 		cubeIndex++;

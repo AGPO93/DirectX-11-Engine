@@ -19,7 +19,6 @@ private:
 
 	struct InstanceType
 	{
-		//DirectX::XMVECTOR position;
 		XMFLOAT3 position;
 		XMMATRIX instanceMatrix;
 	};
@@ -39,15 +38,17 @@ public:
 	void MoveInstance(int i, float newPosX, float newPosY, float newPosZ);
 	XMFLOAT3 GetCurrentPos(int i);
 	bool updateInstancesBuffer(ID3D11Device* );
-	int GetVertexCount();
-	int GetInstanceCount();
-	int GetIndexCount();
-	XMMATRIX GetModelMatrix();
+	int GetVertexCount() { return m_vertexCount; }
+	int GetInstanceCount() { return m_instanceCount; }
+	int GetIndexCount() { return m_indexCount; }
+	XMMATRIX GetModelMatrix() {return  ModelMatrix;}
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
+	void DrawGrid();
+	void LoadArrays(VertexType* vertices, unsigned long* indices);
 
 	ID3D11Buffer *m_vertexBuffer, *m_constantBuffer, *m_instanceBuffer,
 				 *m_indexBuffer;
