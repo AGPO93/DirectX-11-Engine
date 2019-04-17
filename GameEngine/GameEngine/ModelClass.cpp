@@ -123,6 +123,8 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	InstanceType inst;
 	instances.assign(m_instanceCount, inst);
+	NodeType nods;
+	nodes.assign(m_instanceCount, nods);
 
 	for (int i = 0; i < m_instanceCount; i++)
 	{
@@ -137,6 +139,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	LoadArrays(vertices, indices);
 	DrawGrid();
+	AssignNodePositions();
 
 	// Set up the description of the buffers.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -267,7 +270,7 @@ void ModelClass::DrawGrid()
 	{
 		for (int z = 0; z < width; z++)
 		{
-			instances[cubeIndex].position = XMFLOAT3(x * 2.5f, 0.0f, z * 2.5f);
+			instances[cubeIndex].position = XMFLOAT3(x * 3.0f, 0.0f, z * 3.0f);
 			tempPosX += 2;
 			cubeIndex++;
 		}
@@ -350,4 +353,16 @@ void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 	indices[33] = 4;
 	indices[34] = 3;
 	indices[35] = 7;
+}
+
+void ModelClass::AssignNodePositions()
+{
+	// Load node array
+	for (int i = 4; i < instances.size(); i++)
+	{
+		nodes[i].position = instances[i].position;
+		// Fill the openList with these nodes. (All grid nodes)
+		// Starting node will have to be removed and added to
+		// closedList later on.
+	}
 }

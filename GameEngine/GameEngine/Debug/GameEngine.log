@@ -3,6 +3,7 @@ d:\rts-system\gameengine\gameengine\graphicsclass.cpp(25): warning C4316: 'D3DCl
 d:\rts-system\gameengine\gameengine\graphicsclass.cpp(38): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
 d:\rts-system\gameengine\gameengine\graphicsclass.cpp(50): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
   ModelClass.cpp
+d:\rts-system\gameengine\gameengine\modelclass.cpp(361): warning C4018: '<': signed/unsigned mismatch
   SystemClass.cpp
   main.cpp
   Generating Code...

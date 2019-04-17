@@ -120,6 +120,7 @@ bool GraphicsClass::Frame()
 
 	m_Model->UpdateMatrices();
 	m_Model->updateInstancesBuffer(m_Direct3D->GetDevice());
+	StartMovement();
 
 	bool result;
 	result = Render();
@@ -168,12 +169,11 @@ bool GraphicsClass::Render()
 	return true;
 }
 
-
 void GraphicsClass::CubeController(char keyPressed)
 {
 	switch (keyPressed)
 	{
-	case 'W':
+	/*case 'W':
 		moveZ += .25f;
 		if (!moveCheck)
 			moveCheck = true;
@@ -195,14 +195,17 @@ void GraphicsClass::CubeController(char keyPressed)
 		moveX += .25f;
 		if (!moveCheck)
 			moveCheck = true;
-		break;
+		break;*/
 
 	case 'C':
-		ChangeCube();
+		//ChangeCube();
+		startMove = true;
+
 		if (!moveCheck)
 			moveCheck = true;
 		break;
 	}
+
 	MoveCube();
 }
 
@@ -250,5 +253,28 @@ void GraphicsClass::ChangeCube()
 	moveX = previousPos.x;
 	moveY = previousPos.y;
 	moveZ = previousPos.z;
+}
+
+void GraphicsClass::StartMovement()
+{
+	if (startMove)
+	{
+		if (m_Model->nodes[goalNode].position.x > m_Model->instances[cubeIndex].position.x)
+		{
+			moveX += .25f;
+		}
+		else if (m_Model->nodes[goalNode].position.x < m_Model->instances[cubeIndex].position.x)
+		{
+			moveX -= .25f;
+		}
+		else if (m_Model->nodes[goalNode].position.z > m_Model->instances[cubeIndex].position.z)
+		{
+			moveZ += .25f;
+		}
+		else if (m_Model->nodes[goalNode].position.z < m_Model->instances[cubeIndex].position.z)
+		{
+			moveX -= .25f;
+		}
+	}
 }
 

@@ -33,6 +33,7 @@ public:
 private:
 	void MoveCube();
 	void ChangeCube();
+	void StartMovement();
 
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
@@ -45,6 +46,8 @@ private:
 	float moveY = 2.1f;
 	float moveZ = 0.0f;
 	int cubeIndex = 0;
+	int goalNode = 100;
+	bool startMove = false;
 };
 
 #endif

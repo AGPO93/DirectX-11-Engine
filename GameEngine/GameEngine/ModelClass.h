@@ -23,6 +23,21 @@ private:
 		XMMATRIX instanceMatrix;
 	};
 
+	struct NodeType
+	{
+		XMFLOAT3 position;
+		bool traversable = false;
+		bool visited = false;
+		float gCost = 0;
+		float hCost = 0;
+
+		// if node occupied, send to closed list
+		// if node obstacle, send to closed list
+		// G cost = distance from starting node
+		// H cost = distance from goal node
+		// F cost = G cost + H cost
+	};
+
 public:
 	ModelClass();
 	ModelClass(const ModelClass&);
@@ -32,16 +47,22 @@ public:
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
-	void UpdateMatrices();
-	void setRotation(float newPitch, float newYaw, float newRoll);
-	void setTransform(float newPosX, float newPosY, float newPosZ);
-	void MoveInstance(int i, float newPosX, float newPosY, float newPosZ);
-	XMFLOAT3 GetCurrentPos(int i);
 	bool updateInstancesBuffer(ID3D11Device* );
 	int GetVertexCount() { return m_vertexCount; }
 	int GetInstanceCount() { return m_instanceCount; }
 	int GetIndexCount() { return m_indexCount; }
+	void UpdateMatrices();
+	void setRotation(float newPitch, float newYaw, float newRoll);
+	void setTransform(float newPosX, float newPosY, float newPosZ);
+	void MoveInstance(int i, float newPosX, float newPosY, float newPosZ);
 	XMMATRIX GetModelMatrix() {return  ModelMatrix;}
+	XMFLOAT3 GetCurrentPos(int i);
+
+	vector<InstanceType> instances;
+	vector<NodeType> nodes;
+	vector <NodeType> openList;
+	vector <NodeType> closedList;
+	// vector <NodeType> neighbours;?
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
@@ -49,6 +70,7 @@ private:
 	void RenderBuffers(ID3D11DeviceContext*);
 	void DrawGrid();
 	void LoadArrays(VertexType* vertices, unsigned long* indices);
+	void AssignNodePositions();
 
 	ID3D11Buffer *m_vertexBuffer, *m_constantBuffer, *m_instanceBuffer,
 				 *m_indexBuffer;
@@ -58,8 +80,6 @@ private:
 	XMMATRIX RotationMatrix;
 	XMMATRIX FudgeMatrix;
 	XMMATRIX ModelMatrix;
-
-	vector<InstanceType> instances;
 
 	int m_vertexCount, m_instanceCount, m_indexCount;
 
