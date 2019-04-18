@@ -198,8 +198,16 @@ void GraphicsClass::CubeController(char keyPressed)
 		break;*/
 
 	case 'C':
+		/*
+		Once user presses spacebar, call pathfinding in ModelClass 
+		to build the path, then start the movement by looping through
+		the "path" list and moving to each of the node locations
+		within that list.		
+		*/
+
 		//ChangeCube();
 		startMove = true;
+		m_Model->Pathfinding();
 
 		if (!moveCheck)
 			moveCheck = true;
@@ -238,18 +246,18 @@ void GraphicsClass::MoveCube()
 {
 	if (moveCheck)
 	{
-		m_Model->MoveInstance(cubeIndex, moveX, moveY, moveZ);
+		m_Model->MoveInstance(controlCubeIndex, moveX, moveY, moveZ);
 	}
 }
 
-void GraphicsClass::ChangeCube()
+void GraphicsClass::ChangeCube() //not being used atm.
 {
-	if (cubeIndex == 3)
-		cubeIndex = 0;
+	if (controlCubeIndex == 3)
+		controlCubeIndex = 0;
 	else
-		cubeIndex++;
+		controlCubeIndex++;
 
-	XMFLOAT3 previousPos = m_Model->GetCurrentPos(cubeIndex);
+	XMFLOAT3 previousPos = m_Model->GetCurrentPos(controlCubeIndex);
 	moveX = previousPos.x;
 	moveY = previousPos.y;
 	moveZ = previousPos.z;
@@ -259,21 +267,25 @@ void GraphicsClass::StartMovement()
 {
 	if (startMove)
 	{
-		if (m_Model->nodes[goalNode].position.x > m_Model->instances[cubeIndex].position.x)
+
+		for (int i = 0; i < m_Model->path.size(); i++)
 		{
-			moveX += .25f;
-		}
-		else if (m_Model->nodes[goalNode].position.x < m_Model->instances[cubeIndex].position.x)
-		{
-			moveX -= .25f;
-		}
-		else if (m_Model->nodes[goalNode].position.z > m_Model->instances[cubeIndex].position.z)
-		{
-			moveZ += .25f;
-		}
-		else if (m_Model->nodes[goalNode].position.z < m_Model->instances[cubeIndex].position.z)
-		{
-			moveX -= .25f;
+			if (m_Model->nodes[goalNodeIndex].position.x > m_Model->instances[controlCubeIndex].position.x)
+			{
+				moveX += .25f;
+			}
+			else if (m_Model->nodes[goalNodeIndex].position.x < m_Model->instances[controlCubeIndex].position.x)
+			{
+				moveX -= .25f;
+			}
+			else if (m_Model->nodes[goalNodeIndex].position.z > m_Model->instances[controlCubeIndex].position.z)
+			{
+				moveZ += .25f;
+			}
+			else if (m_Model->nodes[goalNodeIndex].position.z < m_Model->instances[controlCubeIndex].position.z)
+			{
+				moveX -= .25f;
+			}
 		}
 	}
 }

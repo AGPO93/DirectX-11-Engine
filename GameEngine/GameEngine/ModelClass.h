@@ -3,8 +3,10 @@
 
 // INCLUDES 
 #include <vector>
+#include <algorithm>
 #include <d3d11.h>
 #include <directxmath.h>
+#include <list>
 using namespace DirectX;
 using namespace std;
 
@@ -26,10 +28,12 @@ private:
 	struct NodeType
 	{
 		XMFLOAT3 position;
-		bool traversable = false;
+		bool obstacle = false;
 		bool visited = false;
-		float gCost = 0;
-		float hCost = 0;
+		float gCost = 0; //fLocalGoal
+		float hCost = 0; //fGlobalGoal
+		vector<NodeType*> neighbours; // might have to initialise for movable cubes.
+		NodeType* parent;
 
 		// if node occupied, send to closed list
 		// if node obstacle, send to closed list
@@ -55,14 +59,16 @@ public:
 	void setRotation(float newPitch, float newYaw, float newRoll);
 	void setTransform(float newPosX, float newPosY, float newPosZ);
 	void MoveInstance(int i, float newPosX, float newPosY, float newPosZ);
+	void Pathfinding();
 	XMMATRIX GetModelMatrix() {return  ModelMatrix;}
 	XMFLOAT3 GetCurrentPos(int i);
 
 	vector<InstanceType> instances;
 	vector<NodeType> nodes;
-	vector <NodeType> openList;
-	vector <NodeType> closedList;
-	// vector <NodeType> neighbours;?
+	vector<NodeType*> path;
+
+	NodeType* startNode = nullptr;
+	NodeType* endNode = nullptr;
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
@@ -71,15 +77,13 @@ private:
 	void DrawGrid();
 	void LoadArrays(VertexType* vertices, unsigned long* indices);
 	void AssignNodePositions();
+	void AssignNodeNeighbours(int width, int height);
 
 	ID3D11Buffer *m_vertexBuffer, *m_constantBuffer, *m_instanceBuffer,
 				 *m_indexBuffer;
 
-	XMMATRIX TransformMatrix;
-	XMMATRIX ScaleMatrix;
-	XMMATRIX RotationMatrix;
-	XMMATRIX FudgeMatrix;
-	XMMATRIX ModelMatrix;
+	XMMATRIX TransformMatrix, ScaleMatrix, RotationMatrix, FudgeMatrix, ModelMatrix;
+
 
 	int m_vertexCount, m_instanceCount, m_indexCount;
 

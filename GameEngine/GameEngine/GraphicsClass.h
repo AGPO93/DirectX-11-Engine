@@ -45,8 +45,8 @@ private:
 	float moveX = 0.0f;
 	float moveY = 2.1f;
 	float moveZ = 0.0f;
-	int cubeIndex = 0;
-	int goalNode = 100;
+	int controlCubeIndex = 100;
+	int goalNodeIndex = 99;
 	bool startMove = false;
 };
 

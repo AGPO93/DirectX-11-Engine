@@ -20,6 +20,9 @@ ModelClass::ModelClass()
 	scaleX = 1;
 	scaleY = 1;
 	scaleZ = 1;
+
+	startNode = new NodeType();
+	endNode = new NodeType();
 }
 
 ModelClass::ModelClass(const ModelClass& other)
@@ -29,7 +32,11 @@ ModelClass::ModelClass(const ModelClass& other)
 
 ModelClass::~ModelClass()
 {
+	delete startNode;
+	startNode = nullptr;
 
+	delete endNode;
+	endNode = nullptr;
 }
 
 bool ModelClass::Initialize(ID3D11Device* device)
@@ -112,6 +119,9 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	// Set the number of vertices in the vertex & instance arrays.
 	m_vertexCount = 8;
 	m_instanceCount = 104;
+	// When adding more instances must make changes in:
+	// AssignNodePositions (the for loop -4)
+	// Change controllable cubes in LoadArrays
 	m_indexCount = 36;
 
 	// Create the arrays.
@@ -139,7 +149,6 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	LoadArrays(vertices, indices);
 	DrawGrid();
-	AssignNodePositions();
 
 	// Set up the description of the buffers.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -258,26 +267,6 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-void ModelClass::DrawGrid()
-{
-	float tempPosX = 5;
-	float tempPosY = 5;
-	int height = 10;
-	int width = 10;
-	int cubeIndex = 4;
-
-	for (int x = 0; x < height; x++)
-	{
-		for (int z = 0; z < width; z++)
-		{
-			instances[cubeIndex].position = XMFLOAT3(x * 3.0f, 0.0f, z * 3.0f);
-			tempPosX += 2;
-			cubeIndex++;
-		}
-		tempPosY += 2;
-	}
-}
-
 void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 {
 	// Load the arrays with data.
@@ -300,10 +289,10 @@ void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 	vertices[7].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Controllabe cubes positions
-	instances[0].position = XMFLOAT3(0.0f, 2.1f, 0.0f);
-	instances[1].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
-	instances[2].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
-	instances[3].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[100].position = XMFLOAT3(0.0f, 2.1f, 0.0f);
+	instances[101].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[102].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[103].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
 
 	// Load the index array with data.
 	//front face
@@ -355,14 +344,132 @@ void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 	indices[35] = 7;
 }
 
+void ModelClass::DrawGrid()
+{
+	float tempPosX = 5;
+	float tempPosY = 5;
+	int height = 10;
+	int width = 10;
+	int cubeIndex = 0;
+
+	for (int x = 0; x < width; x++)
+	{
+		for (int z = 0; z < height; z++)
+		{
+			// Position the cubes in a grid.
+			instances[cubeIndex].position = XMFLOAT3(x * 3.0f, 0.0f, z * 3.0f);
+			tempPosX += 2;
+			cubeIndex++;
+		}
+		tempPosY += 2;
+	}
+
+	AssignNodePositions();
+	AssignNodeNeighbours(width, height);
+}
+
 void ModelClass::AssignNodePositions()
 {
-	// Load node array
-	for (int i = 4; i < instances.size(); i++)
+	// Init node array
+	for (int i = 0; i < (instances.size() - 4); i++)
 	{
 		nodes[i].position = instances[i].position;
-		// Fill the openList with these nodes. (All grid nodes)
-		// Starting node will have to be removed and added to
-		// closedList later on.
+		nodes[i].obstacle = false;
+		nodes[i].parent = nullptr;
+		nodes[i].visited = false;
+		nodes[i].gCost = INFINITY;
+		nodes[i].hCost = INFINITY;
+	}
+}
+
+void ModelClass::AssignNodeNeighbours(int width, int height)
+{
+	for (int x = 0; x < width; x++)
+	{
+		for (int z = 0; z < height; z++)
+		{
+			if (z > 0)
+				nodes[(z * width + x)].neighbours.push_back(&nodes[(z - 1) * width + (x + 0)]);
+			if (z < height - 1)
+				nodes[(z * width + x)].neighbours.push_back(&nodes[(z + 1) * width + (x + 0)]);
+			if (x > 0)
+				nodes[(z * width + x)].neighbours.push_back(&nodes[(z + 0) * width + (x - 1)]);
+			if (x < width - 1)
+				nodes[(z * width + x)].neighbours.push_back(&nodes[(z + 0) * width + (x + 1)]);
+		}
+	}
+}
+
+void ModelClass::Pathfinding()
+{
+	startNode->position = nodes[0].position;
+	endNode->position = nodes[90].position;
+
+	auto distance = [](NodeType* a, NodeType* b)
+	{
+		return sqrtf((a->position.x - b->position.x) * (a->position.x - b->position.x) + (a->position.z - b->position.z) * (a->position.z - b->position.z));
+	};
+
+	auto heuristic = [distance](NodeType* a, NodeType* b)
+	{
+		return distance(a, b);
+	};
+
+	// Setup
+	NodeType* currentNode = startNode;
+	startNode->gCost = 0.0f;
+	startNode->hCost = heuristic(startNode, endNode);
+
+	list<NodeType*> openList;
+	openList.push_back(startNode);
+
+	while (!openList.empty())
+	{ // Sort the list in ascending order based on h cost (distance to goal).
+		openList.sort([](const NodeType* nodeA, const NodeType* nodeB) {return nodeA->hCost < nodeB->hCost; });
+
+		// Remove visited nodes.
+		while (!openList.empty() && openList.front()->visited)
+			openList.pop_front();
+
+		// End search when there's no more nodes to test.
+		if (openList.empty())
+			break;
+
+		// This is to avoid visiting same node more than once.
+		currentNode = openList.front();
+		currentNode->visited = true;
+		
+		// Once the destination has been reached
+		// Trace back the visited nodes to build the path.
+		if (currentNode == endNode)
+		{
+			while (currentNode->parent != nullptr)
+			{
+				path.push_back(currentNode);
+				currentNode = currentNode->parent;
+			}
+		}
+
+		// Loop through the node's neighbours
+		for (auto nodeNeighbour : currentNode->neighbours)
+		{
+			// Add it to the list if it hasn't been visited
+			// and it's not an obstacle.
+			if (!nodeNeighbour->visited && nodeNeighbour->obstacle == 0)
+				openList.push_back(nodeNeighbour);
+
+			// Calculate the neighbours potential lowest parent distance.
+			float lowestParentDistance = currentNode->gCost + distance(currentNode, nodeNeighbour);
+
+			// Update the gCost if this path is chosen.
+			if (lowestParentDistance < nodeNeighbour->gCost)
+			{
+				nodeNeighbour->parent = currentNode;
+				nodeNeighbour->gCost = lowestParentDistance;
+
+				// Update hCost based on distance to the goal position (endNode).
+				nodeNeighbour->hCost = nodeNeighbour->gCost + heuristic(nodeNeighbour, endNode);
+			}
+		}
 	}
 }
