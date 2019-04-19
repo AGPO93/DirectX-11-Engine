@@ -66,9 +66,12 @@ public:
 	vector<InstanceType> instances;
 	vector<NodeType> nodes;
 	vector<NodeType*> path;
+	vector<NodeType> realPath;
 
 	NodeType* startNode = nullptr;
 	NodeType* endNode = nullptr;
+
+	int goalNode = 85;
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
@@ -78,6 +81,7 @@ private:
 	void LoadArrays(VertexType* vertices, unsigned long* indices);
 	void AssignNodePositions();
 	void AssignNodeNeighbours(int width, int height);
+	void createRealPath();
 
 	ID3D11Buffer *m_vertexBuffer, *m_constantBuffer, *m_instanceBuffer,
 				 *m_indexBuffer;

@@ -267,25 +267,33 @@ void GraphicsClass::StartMovement()
 {
 	if (startMove)
 	{
-
-		for (int i = 0; i < m_Model->path.size(); i++)
+		if (m_Model->instances[controlCubeIndex].position.x != m_Model->realPath[goalNodeIndex].position.x)
 		{
-			if (m_Model->nodes[goalNodeIndex].position.x > m_Model->instances[controlCubeIndex].position.x)
+			if (m_Model->realPath[goalNodeIndex].position.x > m_Model->instances[controlCubeIndex].position.x)
 			{
-				moveX += .25f;
+				moveX += 0.5f;
 			}
-			else if (m_Model->nodes[goalNodeIndex].position.x < m_Model->instances[controlCubeIndex].position.x)
+			else if (m_Model->realPath[goalNodeIndex].position.x < m_Model->instances[controlCubeIndex].position.x)
 			{
-				moveX -= .25f;
+				moveX -= 0.5f;
 			}
-			else if (m_Model->nodes[goalNodeIndex].position.z > m_Model->instances[controlCubeIndex].position.z)
+		}
+
+		if (m_Model->instances[controlCubeIndex].position.z != m_Model->realPath[goalNodeIndex].position.z)
+		{
+			if (m_Model->realPath[goalNodeIndex].position.z > m_Model->instances[controlCubeIndex].position.z)
 			{
-				moveZ += .25f;
+				moveZ += 0.5f;
 			}
-			else if (m_Model->nodes[goalNodeIndex].position.z < m_Model->instances[controlCubeIndex].position.z)
+			else if (m_Model->realPath[goalNodeIndex].position.z < m_Model->instances[controlCubeIndex].position.z)
 			{
-				moveX -= .25f;
+				moveZ -= 0.5f;
 			}
+		}
+			
+		if (goalNodeIndex < m_Model->realPath.size()-1)
+		{
+			goalNodeIndex++;
 		}
 	}
 }

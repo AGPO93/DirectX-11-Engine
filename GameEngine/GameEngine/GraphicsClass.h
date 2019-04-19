@@ -46,7 +46,7 @@ private:
 	float moveY = 2.1f;
 	float moveZ = 0.0f;
 	int controlCubeIndex = 100;
-	int goalNodeIndex = 99;
+	int goalNodeIndex = 0; // use model -> goalNode
 	bool startMove = false;
 };
 

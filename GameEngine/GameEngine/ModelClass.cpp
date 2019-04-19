@@ -380,6 +380,16 @@ void ModelClass::AssignNodePositions()
 		nodes[i].gCost = INFINITY;
 		nodes[i].hCost = INFINITY;
 	}
+
+	for (int i = 100; i < instances.size(); i++)
+	{
+		nodes[i].position = instances[0].position;
+		nodes[i].obstacle = false;
+		nodes[i].parent = nullptr;
+		nodes[i].visited = false;
+		nodes[i].gCost = INFINITY;
+		nodes[i].hCost = INFINITY;
+	}
 }
 
 void ModelClass::AssignNodeNeighbours(int width, int height)
@@ -403,12 +413,13 @@ void ModelClass::AssignNodeNeighbours(int width, int height)
 void ModelClass::Pathfinding()
 {
 	startNode->position = nodes[0].position;
-	endNode->position = nodes[90].position;
+	startNode->neighbours = nodes[0].neighbours;
+	endNode->position = nodes[goalNode].position;
 
 	auto distance = [](NodeType* a, NodeType* b)
 	{
 		return sqrtf((a->position.x - b->position.x) * (a->position.x - b->position.x) + (a->position.z - b->position.z) * (a->position.z - b->position.z));
-	};
+	}; 
 
 	auto heuristic = [distance](NodeType* a, NodeType* b)
 	{
@@ -441,13 +452,16 @@ void ModelClass::Pathfinding()
 		
 		// Once the destination has been reached
 		// Trace back the visited nodes to build the path.
-		if (currentNode == endNode)
+		if (currentNode->position.x == endNode->position.x && currentNode->position.z == endNode->position.z)
 		{
 			while (currentNode->parent != nullptr)
 			{
 				path.push_back(currentNode);
 				currentNode = currentNode->parent;
 			}
+			// Should cleanup openList
+			createRealPath();
+			return;
 		}
 
 		// Loop through the node's neighbours
@@ -472,4 +486,21 @@ void ModelClass::Pathfinding()
 			}
 		}
 	}
+}
+
+void ModelClass::createRealPath()
+{
+	NodeType tempNode;
+
+	for (int i = 0; i < path.size(); i++)
+	{
+		realPath.push_back(tempNode);
+	}
+
+	for (int i = 0; i < path.size(); i++)
+	{
+		realPath[i].position = path[i]->position;
+	}
+
+	reverse(realPath.begin(), realPath.end());
 }
