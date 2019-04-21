@@ -22,6 +22,7 @@ private:
 	struct InstanceType
 	{
 		XMFLOAT3 position;
+		XMFLOAT3 rotation;
 		XMMATRIX instanceMatrix;
 	};
 
@@ -71,7 +72,7 @@ public:
 	NodeType* startNode = nullptr;
 	NodeType* endNode = nullptr;
 
-	int goalNode = 85;
+	int goalNode = 99;
 
 private:
 	bool InitializeBuffers(ID3D11Device*);

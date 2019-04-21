@@ -51,7 +51,6 @@ bool ModelClass::Initialize(ID3D11Device* device)
 	{
 		return false;
 	}
-
 	return true;
 }
 
@@ -76,8 +75,9 @@ void ModelClass::UpdateMatrices()
 	for (int i = 0; i < m_instanceCount; i++)
 	{
 		ScaleMatrix = XMMatrixScaling(scaleX, scaleY, scaleZ);
-		RotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
- 		TransformMatrix = XMMatrixTranslation(instances[i].position.x, instances[i].position.y, instances[i].position.z);
+		RotationMatrix = XMMatrixRotationRollPitchYaw(instances[i].rotation.x, instances[i].rotation.y, instances[i].rotation.z);
+		//RotationMatrix = XMMatrixRotationRollPitchYaw(roll, pitch, yaw);
+		TransformMatrix = XMMatrixTranslation(instances[i].position.x, instances[i].position.y, instances[i].position.z);
 
 		instances[i].instanceMatrix = FudgeMatrix * ScaleMatrix * RotationMatrix * TransformMatrix;
 	}
@@ -119,9 +119,6 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	// Set the number of vertices in the vertex & instance arrays.
 	m_vertexCount = 8;
 	m_instanceCount = 104;
-	// When adding more instances must make changes in:
-	// AssignNodePositions (the for loop -4)
-	// Change controllable cubes in LoadArrays
 	m_indexCount = 36;
 
 	// Create the arrays.
@@ -293,6 +290,7 @@ void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 	instances[101].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
 	instances[102].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
 	instances[103].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[100].rotation = XMFLOAT3(90.0f, 0.0f, 0.0f);
 
 	// Load the index array with data.
 	//front face
@@ -358,6 +356,7 @@ void ModelClass::DrawGrid()
 		{
 			// Position the cubes in a grid.
 			instances[cubeIndex].position = XMFLOAT3(x * 3.0f, 0.0f, z * 3.0f);
+			instances[cubeIndex].rotation = XMFLOAT3(90, 0, 90);
 			tempPosX += 2;
 			cubeIndex++;
 		}

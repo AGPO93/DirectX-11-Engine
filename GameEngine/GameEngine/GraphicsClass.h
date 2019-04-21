@@ -41,7 +41,7 @@ private:
 	ColorShaderClass* m_ColorShader;
 
 	XMFLOAT3 camRot;
-	float rotation = 0;
+	XMFLOAT3 camPos;
 	float moveX = 0.0f;
 	float moveY = 2.1f;
 	float moveZ = 0.0f;

@@ -42,10 +42,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(20.0f, 15.0f, -25.0f);
-	m_Camera->SetRotation(15.0f, 4.0f, 0.0f);
+	m_Camera->SetPosition(58.0f, 50.0f, 21.0f);
+	m_Camera->SetRotation(39.0f, -85.0f, 1.0f);
 
 	camRot = m_Camera->GetRotation();
+	camPos = m_Camera->GetPosition();
 
 	m_Model = new ModelClass;
 	if (!m_Model)
@@ -114,7 +115,7 @@ void GraphicsClass::Shutdown()
 
 bool GraphicsClass::Frame()
 {
-	m_Model->setRotation(1.0f, rotation, 1.0f);
+	m_Model->setRotation(50.0f, 50.0f, 0.0f);
 	// moves the cube to mouse position, values too high
 	//m_Model->setTransform(mouseX/50.0f, -mouseY/50.0f, 0.0f);
 
@@ -198,13 +199,6 @@ void GraphicsClass::CubeController(char keyPressed)
 		break;*/
 
 	case 'C':
-		/*
-		Once user presses spacebar, call pathfinding in ModelClass 
-		to build the path, then start the movement by looping through
-		the "path" list and moving to each of the node locations
-		within that list.		
-		*/
-
 		//ChangeCube();
 		startMove = true;
 		m_Model->Pathfinding();
@@ -219,17 +213,33 @@ void GraphicsClass::CubeController(char keyPressed)
 
 void GraphicsClass::CamController(char keyPressed)
 {
-	//m_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	m_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	m_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 	
 	switch (keyPressed)
 	{
+	case 'W':
+		camPos.z += 1;
+		break;
+
+	case 'A':
+		camPos.x -= 1;
+		break;
+
+	case 'S':
+		camPos.z -= 1;
+		break;
+
+	case 'D':
+		camPos.x += 1;
+		break;
+
 	case 'I':
 		camRot.x -= 1;
 		break;
 
 	case 'J':
-		camRot.y -= 1;
+		camRot.z -= 1;
 		break;
 
 	case 'K':
@@ -237,7 +247,7 @@ void GraphicsClass::CamController(char keyPressed)
 		break;
 
 	case 'L':
-		camRot.y += 1;
+		camRot.z += 1;
 		break;
 	}
 }
