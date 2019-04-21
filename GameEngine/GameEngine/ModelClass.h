@@ -12,7 +12,7 @@ using namespace std;
 
 class ModelClass
 {
-private:
+public:
 	struct VertexType
 	{
 		XMFLOAT3 position;
@@ -23,6 +23,8 @@ private:
 	{
 		XMFLOAT3 position;
 		XMMATRIX instanceMatrix;
+		int goalNodeIndex = 0;
+		bool reachedGoal = false;
 	};
 
 	struct NodeType
@@ -71,7 +73,7 @@ public:
 	NodeType* startNode = nullptr;
 	NodeType* endNode = nullptr;
 
-	int goalNode = 85;
+	int goalNode = 99;
 
 private:
 	bool InitializeBuffers(ID3D11Device*);

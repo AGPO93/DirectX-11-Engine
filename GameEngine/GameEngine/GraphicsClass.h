@@ -31,9 +31,9 @@ public:
 	bool moveCheck = false;
 
 private:
-	void MoveCube();
+	void MoveCube(int index);
 	void ChangeCube();
-	void StartMovement();
+	void StartMovement(int index);
 
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;
@@ -46,7 +46,6 @@ private:
 	float moveY = 2.1f;
 	float moveZ = 0.0f;
 	int controlCubeIndex = 100;
-	int goalNodeIndex = 0; // use model -> goalNode
 	bool startMove = false;
 };
 

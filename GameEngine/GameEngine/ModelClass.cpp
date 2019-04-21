@@ -73,7 +73,7 @@ void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 
 void ModelClass::UpdateMatrices()
 {
-	for (int i = 0; i < m_instanceCount; i++)
+	for (int i = 0; i < instances.size(); i++)
 	{
 		ScaleMatrix = XMMatrixScaling(scaleX, scaleY, scaleZ);
 		RotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
@@ -289,10 +289,10 @@ void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 	vertices[7].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Controllabe cubes positions
-	instances[100].position = XMFLOAT3(0.0f, 2.1f, 0.0f);
-	instances[101].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
-	instances[102].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
-	instances[103].position = XMFLOAT3(5.5f, 2.1f, 0.0f);
+	instances[100].position = XMFLOAT3(3.0f, 2.1f, -3.0f);
+	instances[101].position = XMFLOAT3(3.0f, 2.1f, -6.0f);
+	instances[102].position = XMFLOAT3(3.0f, 2.1f, -9.0f);
+	instances[103].position = XMFLOAT3(3.0f, 2.1f, -12.0f);
 
 	// Load the index array with data.
 	//front face
@@ -490,16 +490,11 @@ void ModelClass::Pathfinding()
 
 void ModelClass::createRealPath()
 {
-	NodeType tempNode;
-
 	for (int i = 0; i < path.size(); i++)
 	{
-		realPath.push_back(tempNode);
-	}
+		realPath.push_back(NodeType());
 
-	for (int i = 0; i < path.size(); i++)
-	{
-		realPath[i].position = path[i]->position;
+		realPath[i] = *path[i];
 	}
 
 	reverse(realPath.begin(), realPath.end());
