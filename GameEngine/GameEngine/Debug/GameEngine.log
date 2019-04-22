@@ -1,6 +1,7 @@
-﻿  ModelClass.cpp
-d:\rts-system\gameengine\gameengine\modelclass.cpp(373): warning C4018: '<': signed/unsigned mismatch
-d:\rts-system\gameengine\gameengine\modelclass.cpp(383): warning C4018: '<': signed/unsigned mismatch
-d:\rts-system\gameengine\gameengine\modelclass.cpp(494): warning C4018: '<': signed/unsigned mismatch
-d:\rts-system\gameengine\gameengine\modelclass.cpp(499): warning C4018: '<': signed/unsigned mismatch
-  GameEngine.vcxproj -> D:\RTS-System\GameEngine\Debug\GameEngine.exe
+﻿  GraphicsClass.cpp
+c:\users\ben windley\documents\git\rts-system\gameengine\gameengine\graphicsclass.cpp(25): warning C4316: 'D3DClass': object allocated on the heap may not be aligned 16
+c:\users\ben windley\documents\git\rts-system\gameengine\gameengine\graphicsclass.cpp(38): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
+c:\users\ben windley\documents\git\rts-system\gameengine\gameengine\graphicsclass.cpp(50): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
+c:\users\ben windley\documents\git\rts-system\gameengine\gameengine\graphicsclass.cpp(293): warning C4018: '>': signed/unsigned mismatch
+c:\users\ben windley\documents\git\rts-system\gameengine\gameengine\graphicsclass.cpp(331): warning C4018: '<': signed/unsigned mismatch
+  GameEngine.vcxproj -> C:\Users\Ben Windley\Documents\Git\RTS-System\GameEngine\Debug\GameEngine.exe

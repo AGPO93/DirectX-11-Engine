@@ -121,7 +121,12 @@ bool GraphicsClass::Frame()
 
 	m_Model->UpdateMatrices();
 	m_Model->updateInstancesBuffer(m_Direct3D->GetDevice());
-	StartMovement();
+
+	for (int i = 0; i < 4; i++)
+	{
+		StartMovement(controlCubeIndex + i);
+		MoveCube(controlCubeIndex + i);
+	}
 
 	bool result;
 	result = Render();
@@ -207,8 +212,6 @@ void GraphicsClass::CubeController(char keyPressed)
 			moveCheck = true;
 		break;
 	}
-
-	MoveCube();
 }
 
 void GraphicsClass::CamController(char keyPressed)
@@ -252,11 +255,11 @@ void GraphicsClass::CamController(char keyPressed)
 	}
 }
 
-void GraphicsClass::MoveCube()
+void GraphicsClass::MoveCube(int index)
 {
 	if (moveCheck)
 	{
-		m_Model->MoveInstance(controlCubeIndex, moveX, moveY, moveZ);
+		m_Model->MoveInstance(index, moveX, moveY, moveZ);
 	}
 }
 
@@ -273,37 +276,79 @@ void GraphicsClass::ChangeCube() //not being used atm.
 	moveZ = previousPos.z;
 }
 
-void GraphicsClass::StartMovement()
+void GraphicsClass::StartMovement(int index)
 {
 	if (startMove)
 	{
-		if (m_Model->instances[controlCubeIndex].position.x != m_Model->realPath[goalNodeIndex].position.x)
+		XMFLOAT3 previousPos = m_Model->GetCurrentPos(index);
+		moveX = previousPos.x;
+		moveY = previousPos.y;
+		moveZ = previousPos.z;
+
+		// Get destination node
+		ModelClass::NodeType node;
+
+		if (!m_Model->instances[index].reachedGoal)
 		{
-			if (m_Model->realPath[goalNodeIndex].position.x > m_Model->instances[controlCubeIndex].position.x)
+			node = m_Model->realPath[m_Model->instances[index].goalNodeIndex];
+		}
+		else
+		{
+			// Set goal node
+			// If last soldier, set as final node
+			if (index - controlCubeIndex == 3)
+			{
+				node = m_Model->realPath[m_Model->instances[index].goalNodeIndex];
+			}
+			// If cube index is less than neighbour array size, set as neighbour node
+			else if (m_Model->realPath[m_Model->instances[index].goalNodeIndex].neighbours.size() > index - controlCubeIndex)
+			{
+				node = *m_Model->realPath[m_Model->instances[index].goalNodeIndex].neighbours[index - controlCubeIndex];
+			}
+			// else set as previous node
+			else
+			{
+				node = m_Model->realPath[m_Model->instances[index].goalNodeIndex - 2];
+			}
+		}
+
+		if (m_Model->instances[index].position.x != node.position.x)
+		{
+			if (node.position.x > m_Model->instances[index].position.x)
 			{
 				moveX += 0.5f;
 			}
-			else if (m_Model->realPath[goalNodeIndex].position.x < m_Model->instances[controlCubeIndex].position.x)
+			else if (node.position.x < m_Model->instances[index].position.x)
 			{
 				moveX -= 0.5f;
 			}
 		}
 
-		if (m_Model->instances[controlCubeIndex].position.z != m_Model->realPath[goalNodeIndex].position.z)
+		if (m_Model->instances[index].position.z != node.position.z)
 		{
-			if (m_Model->realPath[goalNodeIndex].position.z > m_Model->instances[controlCubeIndex].position.z)
+			if (node.position.z > m_Model->instances[index].position.z)
 			{
 				moveZ += 0.5f;
 			}
-			else if (m_Model->realPath[goalNodeIndex].position.z < m_Model->instances[controlCubeIndex].position.z)
+			else if (node.position.z < m_Model->instances[index].position.z)
 			{
 				moveZ -= 0.5f;
 			}
 		}
 			
-		if (goalNodeIndex < m_Model->realPath.size()-1)
+		// Update node data
+		if (m_Model->instances[index].position.x == node.position.x &&
+			m_Model->instances[index].position.z == node.position.z)
 		{
-			goalNodeIndex++;
+			if (m_Model->instances[index].goalNodeIndex < m_Model->realPath.size() - 1)
+			{
+				m_Model->instances[index].goalNodeIndex++;
+			}
+			else
+			{
+				// If at last node, go to goal node
+				m_Model->instances[index].reachedGoal = true;
+			}
 		}
 	}
 }

@@ -12,7 +12,7 @@ using namespace std;
 
 class ModelClass
 {
-private:
+public:
 	struct VertexType
 	{
 		XMFLOAT3 position;
@@ -24,6 +24,8 @@ private:
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
 		XMMATRIX instanceMatrix;
+		int goalNodeIndex = 0;
+		bool reachedGoal = false;
 	};
 
 	struct NodeType
