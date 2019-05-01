@@ -244,12 +244,18 @@ char InputClass::KeyPressed()
 	{
 		return 'D';
 	}
-
+	if (m_keyboardState[DIK_Q] & 0x80)
+	{
+		return 'Q';
+	}
+	if (m_keyboardState[DIK_E] & 0x80)
+	{
+		return 'E';
+	}
 	if (IsKeyDown(DIK_SPACE))
 	{
 		return 'C';
 	}
-
 	if (m_keyboardState[DIK_UPARROW] & 0x80)
 	{
 		return 'I';
