@@ -122,7 +122,7 @@ bool GraphicsClass::Frame()
 	m_Model->UpdateMatrices();
 	m_Model->updateInstancesBuffer(m_Direct3D->GetDevice());
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		StartMovement(controlCubeIndex + i);
 		MoveCube(controlCubeIndex + i);
@@ -246,19 +246,19 @@ void GraphicsClass::CamController(char keyPressed)
 		break;
 
 	case 'I':
-		camRot.x -= 1;
+		camRot.x -= .5f;
 		break;
 
 	case 'J':
-		camRot.y -= 1;
+		camRot.y -= .5f;
 		break;
 
 	case 'K':
-		camRot.x += 1;
+		camRot.x += .5f;
 		break;
 
 	case 'L':
-		camRot.y += 1;
+		camRot.y += .5f;
 		break;
 	}
 }

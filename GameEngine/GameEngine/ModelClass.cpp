@@ -118,7 +118,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 
 	// Set the number of vertices in the vertex & instance arrays.
 	m_vertexCount = 8;
-	m_instanceCount = 124;
+	m_instanceCount = 104;
 	m_indexCount = 36;
 
 	// Create the arrays.
@@ -290,11 +290,6 @@ void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 	instances[101].position = XMFLOAT3(3.0f, 2.1f, -6.0f);
 	instances[102].position = XMFLOAT3(3.0f, 2.1f, -9.0f);
 	instances[103].position = XMFLOAT3(3.0f, 2.1f, -12.0f);
-
-	for (int i = 104; i < instances.size(); i++)
-	{
-		instances[i].position = XMFLOAT3(3.0f, 2.1f, -3.0f);
-	}
 
 	// Load the index array with data.
 	//front face
