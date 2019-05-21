@@ -7,6 +7,7 @@
 #include "CameraClass.h"
 #include "ModelClass.h"
 #include "ColorShaderClass.h"
+#include "Textureshaderclass.h"
 
 // GLOBALS 
 const bool FULL_SCREEN = false;
@@ -39,6 +40,7 @@ private:
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
+	TextureShaderClass* m_TextureShader;
 
 	XMFLOAT3 camRot;
 	XMFLOAT3 camPos;

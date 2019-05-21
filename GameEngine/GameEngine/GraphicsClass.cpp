@@ -6,6 +6,7 @@ GraphicsClass::GraphicsClass()
 	m_Camera = 0;
 	m_Model = 0;
 	m_ColorShader = 0;
+	m_TextureShader = 0;
 }
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other)
@@ -54,7 +55,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	result = m_Model->Initialize(m_Direct3D->GetDevice());
+	result = m_Model->Initialize(m_Direct3D->GetDevice(), L"../GameEngine/Resources/seamless-grass-texture-free-thumb27.jpg");
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -74,11 +75,34 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the texture shader object.
+	m_TextureShader = new TextureShaderClass;
+	if (!m_TextureShader)
+	{
+		return false;
+	}
+
+	// Initialize the texture shader object.
+	result = m_TextureShader->Initialize(m_Direct3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		//MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 void GraphicsClass::Shutdown()
 {
+	// Release the texture shader object.
+	if (m_TextureShader)
+	{
+		m_TextureShader->Shutdown();
+		delete m_TextureShader;
+		m_TextureShader = 0;
+	}
+
 	// Release the color shader object.
 	if (m_ColorShader)
 	{
@@ -144,7 +168,7 @@ bool GraphicsClass::Render()
 	bool result;
 
 	// Clear the buffers to begin the scene.
-	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	m_Direct3D->BeginScene(0.6f, 0.6f, 0.9f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
@@ -159,10 +183,19 @@ bool GraphicsClass::Render()
 	//modelMatrix = XMMatrixRotationY(rotation); 
 
 	// Render the model using the color shader.
-	result = m_ColorShader->Render(m_Direct3D->GetDeviceContext(),
-		m_Model->GetVertexCount(), m_Model->GetInstanceCount(),
-		m_Model->GetIndexCount(), modelMatrix, viewMatrix, 
-		projectionMatrix);
+	//result = m_ColorShader->Render(m_Direct3D->GetDeviceContext(),
+	//	m_Model->GetVertexCount(), m_Model->GetInstanceCount(),
+	//	m_Model->GetIndexCount(), modelMatrix, viewMatrix, 
+	//	projectionMatrix);
+
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	// Render the model using the texture shader.
+	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(),
+		m_Model->GetVertexCount(), m_Model->GetInstanceCount(),m_Model->GetIndexCount(), modelMatrix, viewMatrix, projectionMatrix,m_Model->GetTexture());
 
 	if (!result)
 	{

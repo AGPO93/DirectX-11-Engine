@@ -1,10 +1,14 @@
 #include "ModelClass.h"
 
+#include "OBJImporter.h"
+#include <vector>
+
 ModelClass::ModelClass()
 {
 	m_vertexBuffer = 0;
 	m_instanceBuffer = 0;
 	m_indexBuffer = 0;
+	m_Texture = 0;
 
 	FudgeMatrix = XMMatrixIdentity();
 	ModelMatrix = XMMatrixIdentity();
@@ -39,14 +43,24 @@ ModelClass::~ModelClass()
 	endNode = nullptr;
 }
 
-bool ModelClass::Initialize(ID3D11Device* device)
+bool ModelClass::Initialize(ID3D11Device* device, WCHAR* textureFilename)
 {
 	bool result;
 
+	if (_vertices.size() == 0)
+		OBJImporter::ImportMesh(&_vertices, &_indices, "Cube");
+	
 	ModelMatrix = XMMatrixIdentity();
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the texture for this model.
+	result = LoadTexture(device, textureFilename);
 	if (!result)
 	{
 		return false;
@@ -56,6 +70,8 @@ bool ModelClass::Initialize(ID3D11Device* device)
 
 void ModelClass::Shutdown()
 {
+	// Release the model texture.
+	ReleaseTexture();
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
@@ -108,6 +124,11 @@ XMFLOAT3 ModelClass::GetCurrentPos(int i)
 	return previousPos;
 }
 
+ID3D11ShaderResourceView** ModelClass::GetTexture()
+{
+	return m_Texture->GetTexture();
+}
+
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
 {
 	VertexType* vertices;
@@ -117,9 +138,9 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	HRESULT result;
 
 	// Set the number of vertices in the vertex & instance arrays.
-	m_vertexCount = 8;
+	m_vertexCount = _vertices.size();
 	m_instanceCount = 104;
-	m_indexCount = 36;
+	m_indexCount = _indices.size();
 
 	// Create the arrays.
 	vertices = new VertexType[m_vertexCount];
@@ -136,6 +157,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	for (int i = 0; i < m_instanceCount; i++)
 	{
 		instances[i].instanceMatrix = XMMatrixIdentity();
+		instances[i].textureID = 1;
 	}
 
 	indices = new unsigned long[m_indexCount];
@@ -267,78 +289,91 @@ void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
 void ModelClass::LoadArrays(VertexType* vertices, unsigned long* indices)
 {
 	// Load the arrays with data.
-	vertices[0].position = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	vertices[1].position = XMFLOAT3(-1.0f, 1.0f, -1.0f);
-	vertices[2].position = XMFLOAT3(1.0f, 1.0f, -1.0f);
-	vertices[3].position = XMFLOAT3(1.0f, -1.0f, -1.0f);
-	vertices[4].position = XMFLOAT3(-1.0f, -1.0f, 1.0f);
-	vertices[5].position = XMFLOAT3(-1.0f, 1.0f, 1.0f);
-	vertices[6].position = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	vertices[7].position = XMFLOAT3(1.0f, -1.0f, 1.0f);
+	for (int i = 0; i < _vertices.size(); ++i)
+	{
+		vertices[i].position = _vertices[i].position;
+		vertices[i].texture = _vertices[i].texture;
+		vertices[i].normal = _vertices[i].normal;
 
-	vertices[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	vertices[1].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[2].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[3].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	vertices[4].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	vertices[5].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[6].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[7].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+		indices[i] = _indices[i];
+	}
 
+	//vertices[0].position = XMFLOAT3(-1.0f, -1.0f, -1.0f);
+	//vertices[1].position = XMFLOAT3(-1.0f, 1.0f, -1.0f);
+	//vertices[2].position = XMFLOAT3(1.0f, 1.0f, -1.0f);
+	//vertices[3].position = XMFLOAT3(1.0f, -1.0f, -1.0f);
+	//vertices[4].position = XMFLOAT3(-1.0f, -1.0f, 1.0f);
+	//vertices[5].position = XMFLOAT3(-1.0f, 1.0f, 1.0f);
+	//vertices[6].position = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	//vertices[7].position = XMFLOAT3(1.0f, -1.0f, 1.0f);
+	//
+	//vertices[0].texture = XMFLOAT2(0.0f, 1.0f);
+	//vertices[1].texture = XMFLOAT2(0.5f, 0.0f);
+	//vertices[2].texture = XMFLOAT2(1.0f, 1.0f);
+	//vertices[3].texture = XMFLOAT2(1.0f, 0.0f);
+	//vertices[4].texture = XMFLOAT2(1.0f, 0.0f);
+	//vertices[5].texture = XMFLOAT2(1.0f, 1.0f);
+	//vertices[6].texture = XMFLOAT2(1.0f, 1.0f);
+	//vertices[7].texture = XMFLOAT2(1.0f, 0.0f);
+	
 	// Controllabe cubes positions
 	instances[100].position = XMFLOAT3(3.0f, 2.1f, -3.0f);
+	instances[100].textureID = 1;
 	instances[101].position = XMFLOAT3(3.0f, 2.1f, -6.0f);
+	instances[101].textureID = 1;
 	instances[102].position = XMFLOAT3(3.0f, 2.1f, -9.0f);
+	instances[102].textureID = 1;
 	instances[103].position = XMFLOAT3(3.0f, 2.1f, -12.0f);
+	instances[103].textureID = 1;
 
 	// Load the index array with data.
 	//front face
-	indices[0] = 0;
-	indices[1] = 1;
-	indices[2] = 2;
-	indices[3] = 0;
-	indices[4] = 2;
-	indices[5] = 3;
-
-	//back face
-	indices[6] = 4;
-	indices[7] = 6;
-	indices[8] = 5;
-	indices[9] = 4;
-	indices[10] = 7;
-	indices[11] = 6;
-
-	//left face
-	indices[12] = 4;
-	indices[13] = 5;
-	indices[14] = 1;
-	indices[15] = 4;
-	indices[16] = 1;
-	indices[17] = 0;
-
-	//right face
-	indices[18] = 3;
-	indices[19] = 2;
-	indices[20] = 6;
-	indices[21] = 3;
-	indices[22] = 6;
-	indices[23] = 7;
-
-	//top face
-	indices[24] = 1;
-	indices[25] = 5;
-	indices[26] = 6;
-	indices[27] = 1;
-	indices[28] = 6;
-	indices[29] = 2;
-
-	//bottom face
-	indices[30] = 4;
-	indices[31] = 0;
-	indices[32] = 3;
-	indices[33] = 4;
-	indices[34] = 3;
-	indices[35] = 7;
+	//indices[0] = 0;
+	//indices[1] = 1;
+	//indices[2] = 2;
+	//indices[3] = 0;
+	//indices[4] = 2;
+	//indices[5] = 3;
+	//
+	////back face
+	//indices[6] = 4;
+	//indices[7] = 6;
+	//indices[8] = 5;
+	//indices[9] = 4;
+	//indices[10] = 7;
+	//indices[11] = 6;
+	//
+	////left face
+	//indices[12] = 4;
+	//indices[13] = 5;
+	//indices[14] = 1;
+	//indices[15] = 4;
+	//indices[16] = 1;
+	//indices[17] = 0;
+	//
+	////right face
+	//indices[18] = 3;
+	//indices[19] = 2;
+	//indices[20] = 6;
+	//indices[21] = 3;
+	//indices[22] = 6;
+	//indices[23] = 7;
+	//
+	////top face
+	//indices[24] = 1;
+	//indices[25] = 5;
+	//indices[26] = 6;
+	//indices[27] = 1;
+	//indices[28] = 6;
+	//indices[29] = 2;
+	//
+	////bottom face
+	//indices[30] = 4;
+	//indices[31] = 0;
+	//indices[32] = 3;
+	//indices[33] = 4;
+	//indices[34] = 3;
+	//indices[35] = 7;
 }
 
 void ModelClass::DrawGrid()
@@ -356,6 +391,7 @@ void ModelClass::DrawGrid()
 			// Position the cubes in a grid.
 			instances[cubeIndex].position = XMFLOAT3(x * 3.0f, 0.0f, z * 3.0f);
 			instances[cubeIndex].rotation = XMFLOAT3(90, 0, 90);
+			instances[cubeIndex].textureID = 1;
 			tempPosX += 2;
 			cubeIndex++;
 		}
@@ -496,4 +532,39 @@ void ModelClass::createRealPath()
 	}
 
 	reverse(realPath.begin(), realPath.end());
+}
+
+bool ModelClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
+{
+	bool result;
+
+
+	// Create the texture object.
+	m_Texture = new TextureClass;
+	if (!m_Texture)
+	{
+		return false;
+	}
+
+	// Initialize the texture object.
+	result = m_Texture->Initialize(device, filename);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ModelClass::ReleaseTexture()
+{
+	// Release the texture object.
+	if (m_Texture)
+	{
+		m_Texture->Shutdown();
+		delete m_Texture;
+		m_Texture = 0;
+	}
+
+	return;
 }

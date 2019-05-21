@@ -1,7 +1,7 @@
 ﻿  GraphicsClass.cpp
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(25): warning C4316: 'D3DClass': object allocated on the heap may not be aligned 16
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(38): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(51): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(312): warning C4018: '>': signed/unsigned mismatch
-d:\rts-system\gameengine\gameengine\graphicsclass.cpp(351): warning C4018: '<': signed/unsigned mismatch
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(26): warning C4316: 'D3DClass': object allocated on the heap may not be aligned 16
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(39): warning C4316: 'CameraClass': object allocated on the heap may not be aligned 16
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(52): warning C4316: 'ModelClass': object allocated on the heap may not be aligned 16
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(345): warning C4018: '>': signed/unsigned mismatch
+d:\rts-system\gameengine\gameengine\graphicsclass.cpp(384): warning C4018: '<': signed/unsigned mismatch
   GameEngine.vcxproj -> D:\RTS-System\GameEngine\Debug\GameEngine.exe

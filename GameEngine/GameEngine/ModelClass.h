@@ -7,6 +7,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <list>
+#include "TextureClass.h"
 using namespace DirectX;
 using namespace std;
 
@@ -16,7 +17,8 @@ public:
 	struct VertexType
 	{
 		XMFLOAT3 position;
-		XMFLOAT4 color;
+		XMFLOAT2 texture;
+		XMFLOAT3 normal;
 	};
 
 	struct InstanceType
@@ -24,6 +26,7 @@ public:
 		XMFLOAT3 position;
 		XMFLOAT3 rotation;
 		XMMATRIX instanceMatrix;
+		int textureID = 0;
 		int goalNodeIndex = 0;
 		bool reachedGoal = false;
 	};
@@ -50,7 +53,7 @@ public:
 	ModelClass(const ModelClass&);
 	~ModelClass();
 
-	bool Initialize(ID3D11Device*);
+	bool Initialize(ID3D11Device*, WCHAR*);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
@@ -65,6 +68,7 @@ public:
 	void Pathfinding();
 	XMMATRIX GetModelMatrix() {return  ModelMatrix;}
 	XMFLOAT3 GetCurrentPos(int i);
+	ID3D11ShaderResourceView** GetTexture();
 
 	vector<InstanceType> instances;
 	vector<NodeType> nodes;
@@ -74,7 +78,7 @@ public:
 	NodeType* startNode = nullptr;
 	NodeType* endNode = nullptr;
 
-	int goalNode = 99;
+	int goalNode = 55;
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
@@ -85,6 +89,8 @@ private:
 	void AssignNodePositions();
 	void AssignNodeNeighbours(int width, int height);
 	void createRealPath();
+	bool LoadTexture(ID3D11Device*, WCHAR*);
+	void ReleaseTexture();
 
 	ID3D11Buffer *m_vertexBuffer, *m_constantBuffer, *m_instanceBuffer,
 				 *m_indexBuffer;
@@ -93,6 +99,11 @@ private:
 
 
 	int m_vertexCount, m_instanceCount, m_indexCount;
+
+	std::vector<ModelClass::VertexType> _vertices;
+	std::vector<unsigned long> _indices;
+
+	TextureClass* m_Texture;
 
 	// movement, scaling and rotation vars
 	float posX;
