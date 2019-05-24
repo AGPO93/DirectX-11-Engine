@@ -168,7 +168,12 @@ bool GraphicsClass::Render()
 	bool result;
 
 	// Clear the buffers to begin the scene.
-	m_Direct3D->BeginScene(0.6f, 0.6f, 0.9f, 1.0f);
+
+	// Blue "sky box"
+	//m_Direct3D->BeginScene(0.596f, 0.89f, 0.98f, 1.0f);
+
+	// Black "sky box"
+	m_Direct3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
@@ -181,17 +186,6 @@ bool GraphicsClass::Render()
 
 	modelMatrix = m_Model->GetModelMatrix();
 	//modelMatrix = XMMatrixRotationY(rotation); 
-
-	// Render the model using the color shader.
-	//result = m_ColorShader->Render(m_Direct3D->GetDeviceContext(),
-	//	m_Model->GetVertexCount(), m_Model->GetInstanceCount(),
-	//	m_Model->GetIndexCount(), modelMatrix, viewMatrix, 
-	//	projectionMatrix);
-
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	// Render the model using the texture shader.
 	result = m_TextureShader->Render(m_Direct3D->GetDeviceContext(),
@@ -255,19 +249,19 @@ void GraphicsClass::CamController(char keyPressed)
 	switch (keyPressed)
 	{
 	case 'W':
-		camPos.x -= 1;
+		camPos.x -= .3f;
 		break;
 
 	case 'A':
-		camPos.z -= 1;
+		camPos.z -= .3f;
 		break;
 
 	case 'S':
-		camPos.x += 1;
+		camPos.x += .3f;
 		break;
 
 	case 'D':
-		camPos.z += 1;
+		camPos.z += .3f;
 		break;
 
 	case 'Q':
@@ -279,19 +273,19 @@ void GraphicsClass::CamController(char keyPressed)
 		break;
 
 	case 'I':
-		camRot.x -= .5f;
+		camRot.x -= 1;
 		break;
 
 	case 'J':
-		camRot.y -= .5f;
+		camRot.y -= 1;
 		break;
 
 	case 'K':
-		camRot.x += .5f;
+		camRot.x += 1;
 		break;
 
 	case 'L':
-		camRot.y += .5f;
+		camRot.y += 1;
 		break;
 	}
 }
@@ -302,19 +296,6 @@ void GraphicsClass::MoveCube(int index)
 	{
 		m_Model->MoveInstance(index, moveX, moveY, moveZ);
 	}
-}
-
-void GraphicsClass::ChangeCube() //not being used atm.
-{
-	if (controlCubeIndex == 3)
-		controlCubeIndex = 0;
-	else
-		controlCubeIndex++;
-
-	XMFLOAT3 previousPos = m_Model->GetCurrentPos(controlCubeIndex);
-	moveX = previousPos.x;
-	moveY = previousPos.y;
-	moveZ = previousPos.z;
 }
 
 void GraphicsClass::StartMovement(int index)

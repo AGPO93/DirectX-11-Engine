@@ -27,13 +27,20 @@ PixelInputType TextureVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 
-	input.normal = mul(input.normal, worldMatrix);
-	input.normal = mul(input.normal, viewMatrix);
-	input.normal = mul(input.normal, projectionMatrix);
+	input.normal = normalize(mul(input.normal, worldMatrix));
 
 	output.colour = float4(1, 1, 1, 1);
 
-	output.colour *= dot(float3(-0.1f, 0.3f, -1.4f), input.normal);
+	float3 light_dir = normalize(float3(0.1f, -1.0f, 0.1f));
+
+	float intensity = dot( -light_dir, input.normal);
+
+	intensity += 0.3f;
+
+	// Ambient light.
+	intensity = clamp(intensity, 0.0f, 1.0f);
+
+	output.colour *= intensity;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;

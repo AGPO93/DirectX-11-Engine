@@ -33,7 +33,6 @@ public:
 
 private:
 	void MoveCube(int index);
-	void ChangeCube();
 	void StartMovement(int index);
 
 	D3DClass* m_Direct3D;
