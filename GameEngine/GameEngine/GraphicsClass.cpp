@@ -249,19 +249,19 @@ void GraphicsClass::CamController(char keyPressed)
 	switch (keyPressed)
 	{
 	case 'W':
-		camPos.x -= .3f;
+		camPos.x -= 1;
 		break;
 
 	case 'A':
-		camPos.z -= .3f;
+		camPos.z -= 1;
 		break;
 
 	case 'S':
-		camPos.x += .3f;
+		camPos.x += 1;
 		break;
 
 	case 'D':
-		camPos.z += .3f;
+		camPos.z += 1;
 		break;
 
 	case 'Q':

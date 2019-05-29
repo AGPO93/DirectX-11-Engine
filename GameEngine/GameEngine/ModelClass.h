@@ -78,7 +78,7 @@ public:
 	NodeType* startNode = nullptr;
 	NodeType* endNode = nullptr;
 
-	int goalNode = 18;
+	int goalNode = 99;
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
