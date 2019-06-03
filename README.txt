@@ -14,3 +14,6 @@ Move the camera with WASD and rotate it with the arrow keys.
 Press spacebar to start A* pathfinding and movement.
 
 Change the int "goalNode" in ModelClass.h to change the destination grid node.
+
+
+Find out more about this project at: https://agpo93.github.io/projects/directxrts/
